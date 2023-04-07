@@ -1,10 +1,17 @@
 """
-*** V_0.1.2 ***
+*** V_0.1.3 ***
+
 Falta implementar por ahora:
-- Si un efecto actúa sobre, debe prevalecer el ganador según su tipo
-- Verificar que los efectos de elementos de tipo FIRE y WATER se efectúen de manera correcta
-- Implementar con sus respectivas validaciones el efecto del elemento de tipo ICE
-- Más cosas que salgan por el camino
+
+- Si un efecto actúa sobre un personaje que ya tenía un efecto sobre sí,
+  debe prevalecer el efecto ganador según su tipo.
+
+- Si un efecto actúa sobre un personaje que ya tenía un efecto sobre sí,
+  el nuevo efecto debe tener el contador de turnos (shifts) reiniciado
+  para se efectúe durante el número de turnos que le corresponde (3).
+
+- Más cosas que salgan por el camino.
+
 """
 
 import random
@@ -103,7 +110,7 @@ class Effect:
     def __init__(self, element):
         self.element = element
 
-    def elemental_effect(self, name, shifts, miss_prob):
+    def elemental_effect(self, name, shifts, miss_prob, freeze):
         if self.element == "FIRE":
             """
             Aplica QUEMADURA (versión en Inglés está por revisar):
@@ -132,15 +139,15 @@ class Effect:
             aumentando su probabilidad de fallar en 60 Puntos (aún está por revisar).
             """
             if shifts > 0:
-                shifts = shifts - 1
                 if shifts == 3:
                     miss_prob = miss_prob + 60
-                    print(" ")
-                    print(f"¡{name} fue arrojado por TSUNAMI!")
-                    print(
-                        f"¡La probabilidad de fallar de {name} pasa a {miss_prob} Puntos!")
-                    print(f"¡{shifts} rondas de TSUNAMI restantes!")
-                    print(" ")
+                shifts = shifts - 1
+                print(" ")
+                print(f"¡{name} fue arrojado por TSUNAMI!")
+                print(
+                    f"¡La probabilidad de fallar de {name} pasa a {miss_prob} Puntos!")
+                print(f"¡{shifts} rondas de TSUNAMI restantes!")
+                print(" ")
                 return self.element, miss_prob, shifts
             else:
                 print(" ")
@@ -156,11 +163,20 @@ class Effect:
             "Congela" al rival, lo que le impide hacer algo durante el
             siguiente turno.
             """
-            print(" ")
-            print(f"¡{name} está bajo efecto de CONGELAMIENTO!")
-            print(f"¡{name} no puede hacer nada durante este turno!")
-            print(" ")
-            return self.element
+            if freeze == False:
+                print(" ")
+                print(f"¡{name} está bajo efecto de CONGELAMIENTO!")
+                print(f"¡{name} no puede hacer nada durante este turno!")
+                print(" ")
+                freeze = True
+                
+            else:
+                print(" ")
+                print(f"¡{name} ya no está bajo efecto de CONGELAMIENTO!")
+                print(" ")
+                freeze = False
+            
+            return self.element, freeze
 
 
 if __name__ == '__main__':
@@ -177,146 +193,178 @@ if __name__ == '__main__':
         if woden.has_an_effect == True:
 
             # Recibe el tipo de ataque, la vida y el número de turnos
-            effect_stats = w_effect.elemental_effect(
-                woden.name, shifts, w_attack.miss_prob)
+            w_effect_stats = w_effect.elemental_effect(
+                woden.name, w_shifts, w_attack.miss_prob, w_freeze)
+            
+            if w_effect_stats[1] != False:
 
-            if effect_stats[0] == "FIRE":
-                damage = effect_stats[1]
-                woden.get_damage(damage)
-                shifts = effect_stats[2]
+                if w_effect_stats[0] == "FIRE":
+                    damage = w_effect_stats[1]
+                    woden.get_damage(damage)
+                    w_shifts = w_effect_stats[2]
 
-            elif effect_stats[0] == "WATER":
-                miss_prob = effect_stats[1]
-                shifts = effect_stats[2]
+                elif w_effect_stats[0] == "WATER":
+                    miss_prob = w_effect_stats[1]
+                    w_shifts = w_effect_stats[2]
 
-            elif effect_stats[0] == "ICE":
-                freeze = True
-                shifts = effect_stats[2]
+                elif w_effect_stats[0] == "ICE":
+                    w_freeze = w_effect_stats[1]
+                    print("*** ENTRA EN EFECTO ICE ***")
 
-            elif effect_stats[0] == False:
+            else:
                 woden.has_an_effect = False
 
         else:
             miss_prob = 20
-            shifts = 3
-            freeze = False
+            w_shifts = 3
+            w_freeze = False
 
-        while True:
-            woden.print_stats()
+        woden.print_stats()
 
-            print("1. Ataque normal.")
-            print("2. ataque elemental.")
-            opc = int(input("¿Qué desea hacer?: "))
-            print(" ")
-
-            if opc == 1:
-                atk = 0
-                break
-            elif opc == 2:
-                atk = 1
-                break
-
-        if atk == 1:
+        # Si Woden no está congelado puede atacar
+        if w_freeze == False:
             while True:
-                print("1. Fuego.")
-                print("2. Agua.")
-                print("3. Hielo.")
+                print("1. Ataque normal.")
+                print("2. ataque elemental.")
                 opc = int(input("¿Qué desea hacer?: "))
                 print(" ")
 
                 if opc == 1:
-                    atk = 1
+                    atk = 0
                     break
                 elif opc == 2:
-                    atk = 2
-                    break
-                elif opc == 3:
-                    atk = 3
+                    atk = 1
                     break
 
-        w_attack = Attack(atk, woden.damage, 20, 10, 30, miss_prob)
-        w_attack.get_element_name()
+            if atk == 1:
+                while True:
+                    print("1. Fuego.")
+                    print("2. Agua.")
+                    print("3. Hielo.")
+                    opc = int(input("¿Qué desea hacer?: "))
+                    print(" ")
+
+                    if opc == 1:
+                        atk = 1
+                        break
+                    elif opc == 2:
+                        atk = 2
+                        break
+                    elif opc == 3:
+                        atk = 3
+                        break
+
+            w_attack = Attack(atk, woden.damage, 20, 10, 30, miss_prob)
+            w_attack.get_element_name()
 
         # Enemy's attack
         if enemy.has_an_effect == True:
 
             # Recibe el tipo de ataque, la vida y el número de turnos
-            effect_stats = e_effect.elemental_effect(
-                enemy.name, shifts, e_attack.miss_prob)
+            e_effect_stats = e_effect.elemental_effect(
+                enemy.name, e_shifts, e_attack.miss_prob, e_freeze)
+            
+            if e_effect_stats[1] != False:
+                 
+                if e_effect_stats[0] == "FIRE":
+                    damage = e_effect_stats[1]
+                    enemy.get_damage(damage)
+                    e_shifts = e_effect_stats[2]
 
-            if effect_stats[0] == "FIRE":
-                damage = effect_stats[1]
-                enemy.get_damage(damage)
-                shifts = effect_stats[2]
+                elif e_effect_stats[0] == "WATER":
+                    miss_prob = e_effect_stats[1]
+                    e_shifts = e_effect_stats[2]
 
-            elif effect_stats[0] == "WATER":
-                miss_prob = effect_stats[1]
-                shifts = effect_stats[2]
+                elif e_effect_stats[0] == "ICE":
+                    e_freeze = e_effect_stats[1]
 
-            elif effect_stats[0] == "ICE":
-                freeze = True
-                shifts = effect_stats[2]
-
-            elif effect_stats[0] == False:
+            else:
                 enemy.has_an_effect = False
 
         else:
             miss_prob = 20
-            shifts = 3
-            freeze = False
+            e_shifts = 3
+            e_freeze = False
 
         enemy.print_stats()
-        atk = random.randint(0, 3)
-        e_attack = Attack(atk, woden.damage, 20, 10, 30, miss_prob)
-        e_attack.get_element_name()
+
+        # Si Enemy no está congelado puede atacar
+        if e_freeze == False:
+            atk = random.randint(0, 3)
+            e_attack = Attack(atk, woden.damage, 20, 10, 30, miss_prob)
+            e_attack.get_element_name()
 
         # Elementos de los ataques
         print(" ")
-        print(f"¡WODEN HA USADO UN ATAQUE DE TIPO {w_attack.element_name}!")
-        print(
-            f"¡EL ENEMIGO HA USADO UN ATAQUE DE TIPO {e_attack.element_name}!")
+        # Si Woden no está congelado, se muestra su tipo de ataque
+        if w_freeze == False:
+            print(
+                f"¡WODEN HA USADO UN ATAQUE DE TIPO {w_attack.element_name}!")
+        # Si Enemy no está congelado, se muestra su tipo de ataque
+        if e_freeze == False:
+            print(
+                f"¡EL ENEMIGO HA USADO UN ATAQUE DE TIPO {e_attack.element_name}!")
         print(" ")
 
         # ¿Quién gana el turno?
-        if w_attack.element_name == "FIRE" and e_attack.element_name == "FIRE":
-            woden_wins_shift = True
-            enemy_wins_shift = True
 
-        elif w_attack.element_name == "FIRE" and e_attack.element_name == "WATER":
-            woden_wins_shift = False
-            enemy_wins_shift = True
+        # Si ninguno está congelado, se evalúan los tipos de los ataques
+        if w_freeze == False and e_freeze == False:
 
-        elif w_attack.element_name == "FIRE" and e_attack.element_name == "ICE":
+            if w_attack.element_name == "FIRE" and e_attack.element_name == "FIRE":
+                woden_wins_shift = True
+                enemy_wins_shift = True
+
+            elif w_attack.element_name == "FIRE" and e_attack.element_name == "WATER":
+                woden_wins_shift = False
+                enemy_wins_shift = True
+
+            elif w_attack.element_name == "FIRE" and e_attack.element_name == "ICE":
+                woden_wins_shift = True
+                enemy_wins_shift = False
+
+            elif w_attack.element_name == "WATER" and e_attack.element_name == "WATER":
+                woden_wins_shift = True
+                enemy_wins_shift = True
+
+            elif w_attack.element_name == "WATER" and e_attack.element_name == "FIRE":
+                woden_wins_shift = True
+                enemy_wins_shift = False
+
+            elif w_attack.element_name == "WATER" and e_attack.element_name == "ICE":
+                woden_wins_shift = False
+                enemy_wins_shift = True
+
+            elif w_attack.element_name == "ICE" and e_attack.element_name == "ICE":
+                woden_wins_shift = True
+                enemy_wins_shift = True
+
+            elif w_attack.element_name == "ICE" and e_attack.element_name == "FIRE":
+                woden_wins_shift = False
+                enemy_wins_shift = True
+
+            elif w_attack.element_name == "ICE" and e_attack.element_name == "WATER":
+                woden_wins_shift = True
+                enemy_wins_shift = False
+
+            elif w_attack.element_name == "NORMAL" or e_attack.element_name == "NORMAL":
+                woden_wins_shift = True
+                enemy_wins_shift = True
+        
+        # Si Woden no está congelado pero el enemigo sí:
+        elif w_freeze == False and e_freeze == True:
             woden_wins_shift = True
             enemy_wins_shift = False
 
-        elif w_attack.element_name == "WATER" and e_attack.element_name == "WATER":
-            woden_wins_shift = True
-            enemy_wins_shift = True
-
-        elif w_attack.element_name == "WATER" and e_attack.element_name == "FIRE":
-            woden_wins_shift = True
-            enemy_wins_shift = False
-
-        elif w_attack.element_name == "WATER" and e_attack.element_name == "ICE":
+        # Si Woden está congelado pero el enemigo no:
+        elif w_freeze == True and e_freeze == False:
             woden_wins_shift = False
             enemy_wins_shift = True
-
-        elif w_attack.element_name == "ICE" and e_attack.element_name == "ICE":
-            woden_wins_shift = True
-            enemy_wins_shift = True
-
-        elif w_attack.element_name == "ICE" and e_attack.element_name == "FIRE":
+        
+        # Si ambos están congelados:
+        else:
             woden_wins_shift = False
-            enemy_wins_shift = True
-
-        elif w_attack.element_name == "ICE" and e_attack.element_name == "WATER":
-            woden_wins_shift = True
             enemy_wins_shift = False
-
-        elif w_attack.element_name == "NORMAL" or e_attack.element_name == "NORMAL":
-            woden_wins_shift = True
-            enemy_wins_shift = True
 
         if woden_wins_shift == True:
             print("¡WODEN HA GANADO EL TURNO!")
@@ -339,6 +387,15 @@ if __name__ == '__main__':
             if e_attack.critic_attack == True and e_attack.elemental_attack == True:
                 woden.has_an_effect = True
                 w_effect = Effect(e_attack.element_name)
+
+        # Quitamos FREEZE al final del turno
+        if w_freeze == True:
+            w_freeze = False
+            woden.has_an_effect = False
+
+        if e_freeze == True:
+            e_freeze = False
+            enemy.has_an_effect = False
 
         print(" ")
         print("*** FIN DEL TURNO ***")
