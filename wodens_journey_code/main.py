@@ -1,3 +1,12 @@
+"""
+*** V_0.1.2 ***
+Falta implementar por ahora:
+- Si un efecto actúa sobre, debe prevalecer el ganador según su tipo
+- Verificar que los efectos de elementos de tipo FIRE y WATER se efectúen de manera correcta
+- Implementar con sus respectivas validaciones el efecto del elemento de tipo ICE
+- Más cosas que salgan por el camino
+"""
+
 import random
 # random.randint(0, 100) -> número aleatorio del 0 al 100
 
@@ -31,6 +40,8 @@ class Attack:
         self.critic_damage = critic_damage
         self.critic_prob = critic_prob
         self.miss_prob = miss_prob
+        self.critic_attack = False
+        self.elemental_attack = False
 
     def get_element_name(self):
         if self.element == 1:
@@ -52,11 +63,11 @@ class Attack:
     def its_critic(self, number_for_probs):
         if number_for_probs <= self.critic_prob:
             self.critic_attack = True
-            return True
 
         else:
             self.critic_attack = False
-            return False
+
+        return self.critic_attack
 
     def attack_missed(self, number_for_probs):
         if number_for_probs <= self.miss_prob:
@@ -92,21 +103,52 @@ class Effect:
     def __init__(self, element):
         self.element = element
 
-    def element_effect(self):
+    def elemental_effect(self, name, shifts, miss_prob):
         if self.element == "FIRE":
             """
             Aplica QUEMADURA (versión en Inglés está por revisar):
-            Quita X (X aún está por revisar) cantidad de vida durante 3 turnos.
+            Quita 20HP (aún está por revisar) cantidad de vida durante 3 turnos.
             """
-            pass
+            if shifts > 0:
+                shifts = shifts - 1
+                damage = 20
+                print(" ")
+                print(f"¡{name} está bajo efecto de QUEMADURA!")
+                print(
+                    f"¡La QUEMADURA ha aplicado {damage} Puntos de daño a {name}!")
+                print(f"¡{shifts} rondas de QUEMADURA restantes!")
+                print(" ")
+                return self.element, damage, shifts
+            else:
+                print(" ")
+                print(f"¡{name} ya no está bajo efecto de QUEMADURA!")
+                print(" ")
+                return self.element, False
 
         elif self.element == "WATER":
             """
             Aplica TSUNAMI (versión en Inglés está por revisar):
-            "Arrastra" al enemigo a una gran distancia, reduciendo su precisión
-            (aumentando su probabilidad de fallar) en X% (X aún está por revisar).
+            "Arrastra" al enemigo a una gran distancia, reduciendo su precisión,
+            aumentando su probabilidad de fallar en 60 Puntos (aún está por revisar).
             """
-            pass
+            if shifts > 0:
+                shifts = shifts - 1
+                if shifts == 3:
+                    miss_prob = miss_prob + 60
+                    print(" ")
+                    print(f"¡{name} fue arrojado por TSUNAMI!")
+                    print(
+                        f"¡La probabilidad de fallar de {name} pasa a {miss_prob} Puntos!")
+                    print(f"¡{shifts} rondas de TSUNAMI restantes!")
+                    print(" ")
+                return self.element, miss_prob, shifts
+            else:
+                print(" ")
+                print(f"¡{name} ya salió del efecto de TSUNAMI!")
+                print(
+                    f"¡La probabilidad de fallar de {name} vuelve a la normalidad!")
+                print(" ")
+                return self.element, False
 
         elif self.element == "ICE":
             """
@@ -114,14 +156,18 @@ class Effect:
             "Congela" al rival, lo que le impide hacer algo durante el
             siguiente turno.
             """
-            pass
+            print(" ")
+            print(f"¡{name} está bajo efecto de CONGELAMIENTO!")
+            print(f"¡{name} no puede hacer nada durante este turno!")
+            print(" ")
+            return self.element
 
 
 if __name__ == '__main__':
     woden = Character("Woden", 200, 10)
     enemy = Character("Enemy", 200, 10)
 
-    # Turn
+    # Shift starts
     while True:
         print(" ")
         print("*** COMIENZA EL TURNO ***")
@@ -129,8 +175,32 @@ if __name__ == '__main__':
 
         # Woden's attack
         if woden.has_an_effect == True:
-            pass
-        
+
+            # Recibe el tipo de ataque, la vida y el número de turnos
+            effect_stats = w_effect.elemental_effect(
+                woden.name, shifts, w_attack.miss_prob)
+
+            if effect_stats[0] == "FIRE":
+                damage = effect_stats[1]
+                woden.get_damage(damage)
+                shifts = effect_stats[2]
+
+            elif effect_stats[0] == "WATER":
+                miss_prob = effect_stats[1]
+                shifts = effect_stats[2]
+
+            elif effect_stats[0] == "ICE":
+                freeze = True
+                shifts = effect_stats[2]
+
+            elif effect_stats[0] == False:
+                woden.has_an_effect = False
+
+        else:
+            miss_prob = 20
+            shifts = 3
+            freeze = False
+
         while True:
             woden.print_stats()
 
@@ -164,23 +234,41 @@ if __name__ == '__main__':
                     atk = 3
                     break
 
-        w_attack = Attack(atk, woden.damage, 20, 10, 30, 20)
+        w_attack = Attack(atk, woden.damage, 20, 10, 30, miss_prob)
         w_attack.get_element_name()
-        if w_attack.critic_attack == True and w_attack.elemental_attack == True:
-            enemy.has_an_effect = True
-            e_effect = Effect(w_attack.get_element_name)
 
         # Enemy's attack
         if enemy.has_an_effect == True:
-            pass
+
+            # Recibe el tipo de ataque, la vida y el número de turnos
+            effect_stats = e_effect.elemental_effect(
+                enemy.name, shifts, e_attack.miss_prob)
+
+            if effect_stats[0] == "FIRE":
+                damage = effect_stats[1]
+                enemy.get_damage(damage)
+                shifts = effect_stats[2]
+
+            elif effect_stats[0] == "WATER":
+                miss_prob = effect_stats[1]
+                shifts = effect_stats[2]
+
+            elif effect_stats[0] == "ICE":
+                freeze = True
+                shifts = effect_stats[2]
+
+            elif effect_stats[0] == False:
+                enemy.has_an_effect = False
+
+        else:
+            miss_prob = 20
+            shifts = 3
+            freeze = False
 
         enemy.print_stats()
         atk = random.randint(0, 3)
-        e_attack = Attack(atk, woden.damage, 20, 10, 30, 20)
+        e_attack = Attack(atk, woden.damage, 20, 10, 30, miss_prob)
         e_attack.get_element_name()
-        if e_attack.critic_attack == True and e_attack.elemental_attack == True:
-            woden.has_an_effect = True
-            w_effect = Effect(e_attack.get_element_name)
 
         # Elementos de los ataques
         print(" ")
@@ -190,40 +278,67 @@ if __name__ == '__main__':
         print(" ")
 
         # ¿Quién gana el turno?
-        # Crear un diccionario de mapeo de elementos
-        element_map = {
-            ("FIRE", "FIRE"): (True, True),
-            ("FIRE", "WATER"): (False, True),
-            ("FIRE", "ICE"): (True, False),
-            ("WATER", "WATER"): (True, True),
-            ("WATER", "FIRE"): (True, False),
-            ("WATER", "ICE"): (False, True),
-            ("ICE", "ICE"): (True, True),
-            ("ICE", "FIRE"): (False, True),
-            ("ICE", "WATER"): (True, False),
-            ("NORMAL", ""): (True, True),
-            ("", "NORMAL"): (True, True),
-        }
+        if w_attack.element_name == "FIRE" and e_attack.element_name == "FIRE":
+            woden_wins_shift = True
+            enemy_wins_shift = True
 
-        # Buscar el resultado correspondiente en el diccionario
-        woden_wins_turn, enemy_wins_turn = element_map.get(
-            (w_attack.element_name, e_attack.element_name), (False, False))
+        elif w_attack.element_name == "FIRE" and e_attack.element_name == "WATER":
+            woden_wins_shift = False
+            enemy_wins_shift = True
 
-        if woden_wins_turn == True:
+        elif w_attack.element_name == "FIRE" and e_attack.element_name == "ICE":
+            woden_wins_shift = True
+            enemy_wins_shift = False
+
+        elif w_attack.element_name == "WATER" and e_attack.element_name == "WATER":
+            woden_wins_shift = True
+            enemy_wins_shift = True
+
+        elif w_attack.element_name == "WATER" and e_attack.element_name == "FIRE":
+            woden_wins_shift = True
+            enemy_wins_shift = False
+
+        elif w_attack.element_name == "WATER" and e_attack.element_name == "ICE":
+            woden_wins_shift = False
+            enemy_wins_shift = True
+
+        elif w_attack.element_name == "ICE" and e_attack.element_name == "ICE":
+            woden_wins_shift = True
+            enemy_wins_shift = True
+
+        elif w_attack.element_name == "ICE" and e_attack.element_name == "FIRE":
+            woden_wins_shift = False
+            enemy_wins_shift = True
+
+        elif w_attack.element_name == "ICE" and e_attack.element_name == "WATER":
+            woden_wins_shift = True
+            enemy_wins_shift = False
+
+        elif w_attack.element_name == "NORMAL" or e_attack.element_name == "NORMAL":
+            woden_wins_shift = True
+            enemy_wins_shift = True
+
+        if woden_wins_shift == True:
             print("¡WODEN HA GANADO EL TURNO!")
             w_attack.calc_damage_attack()
             woden.set_attack(w_attack.damage)
             enemy.get_damage(woden.attack)
             print(f"Enemy HP: {enemy.life}")
             print(" ")
+            if w_attack.critic_attack == True and w_attack.elemental_attack == True:
+                enemy.has_an_effect = True
+                e_effect = Effect(w_attack.element_name)
 
-        if enemy_wins_turn == True:
+        if enemy_wins_shift == True:
             print("¡EL ENEMIGO HA GANADO EL TURNO!")
             e_attack.calc_damage_attack()
             enemy.set_attack(e_attack.damage)
             woden.get_damage(enemy.attack)
             print(f"Woden HP: {woden.life}")
             print(" ")
+            if e_attack.critic_attack == True and e_attack.elemental_attack == True:
+                woden.has_an_effect = True
+                w_effect = Effect(e_attack.element_name)
 
         print(" ")
         print("*** FIN DEL TURNO ***")
