@@ -1,0 +1,15 @@
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\bin\Debug\net6.0\wondes_journey_code_csharp.exe
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\bin\Debug\net6.0\wondes_journey_code_csharp.deps.json
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\bin\Debug\net6.0\wondes_journey_code_csharp.runtimeconfig.json
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\bin\Debug\net6.0\wondes_journey_code_csharp.dll
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\bin\Debug\net6.0\wondes_journey_code_csharp.pdb
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\wondes_journey_code_csharp.csproj.AssemblyReference.cache
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\wondes_journey_code_csharp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\wondes_journey_code_csharp.AssemblyInfoInputs.cache
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\wondes_journey_code_csharp.AssemblyInfo.cs
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\wondes_journey_code_csharp.csproj.CoreCompileInputs.cache
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\wondes_journey_code_csharp.dll
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\refint\wondes_journey_code_csharp.dll
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\wondes_journey_code_csharp.pdb
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\wondes_journey_code_csharp.genruntimeconfig.cache
+C:\Users\RYZEN\Desktop\COSAS_DE_JOSE\COSAS_DE_PROGRAMACION\wodens_journey\wondes_journey_code_csharp\obj\Debug\net6.0\ref\wondes_journey_code_csharp.dll
