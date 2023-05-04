@@ -225,7 +225,7 @@ if __name__ == '__main__':
         if w_freeze == False:
             while True:
                 print("1. Ataque normal.")
-                print("2. ataque elemental.")
+                print("2. Ataque elemental.")
                 opc = int(input("¿Qué desea hacer?: "))
                 print(" ")
 
